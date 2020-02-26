@@ -9,33 +9,26 @@
 using namespace cv;
 using namespace std;
 
-int main(int argc, char* argv[])
+int main()
 {
 	
-	//create Background Subtractor objects
+	//создали проект
 	Ptr<BackgroundSubtractor> pBackSub;
 	
-		//pBackSub = createBackgroundSubtractorMOG2();
+		pBackSub = createBackgroundSubtractorKNN(); //задали алгоритм вырезания фона
+	VideoCapture capture(0); //подняли устройство
 	
-		pBackSub = createBackgroundSubtractorKNN();
-	VideoCapture capture(0);
-	if (!capture.isOpened()) {
-		//error in opening the video input
-		cerr << "Unable to open camera" << endl;
-		return 0;
-	}
-	Mat frame, fgMask;
-	while (true) {
+	Mat frame, fgMask; //создали два кадра
+	while (true) 
+	{
 		capture >> frame;
-		if (frame.empty())
-			break;
-		//update the background model
-		pBackSub->apply(frame, fgMask);
+		
+		pBackSub->apply(frame, fgMask); //скормили алгоритму кадр на вход и на выход
 
-		//show the current frame and the fg masks
-		imshow("Frame", frame);
+		
+		imshow("Frame", frame); // отобразили оба кадра, исходный и с маской
 		imshow("FG Mask", fgMask);
-		//get the input from the keyboard
+		//ловим выход и заодно даем задержку для отрисовки
 		int keyboard = waitKey(30);
 		if (keyboard == 'q' || keyboard == 27)
 			break;
